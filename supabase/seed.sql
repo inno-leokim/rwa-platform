@@ -71,3 +71,32 @@ insert into projects (name, category, chain, tvl, status, description, detail, w
   'Tether Gold(XAUt)는 스위스 금고에 보관된 실물 금과 연동된 ERC-20 토큰입니다. 토큰 보유자는 언제든지 실물 금 인출을 요청할 수 있으며, 제3자 감사를 통해 준비금을 정기적으로 검증합니다.',
   'https://gold.tether.to', '2020-01', ''
 );
+
+-- 뉴스레터 샘플 데이터
+insert into newsletters (title, summary, content_url, issued_at) values
+(
+  'RWA 시장 2024년 결산 — TVL $10B 돌파의 의미',
+  '2024년 RWA 시장은 총 TVL $10B를 넘어서며 역대 최고치를 기록했습니다. Ondo Finance와 BlackRock BUIDL의 급성장, 국채 토큰화 경쟁 심화, 그리고 아시아 시장의 부상까지 주요 흐름을 정리했습니다.',
+  '', '2024-12-30'
+),
+(
+  '블랙록 BUIDL, 출시 3개월 만에 $500M 돌파',
+  '세계 최대 자산운용사 블랙록이 출시한 온체인 국채 펀드 BUIDL이 빠른 속도로 성장하고 있습니다. 기관 자금 유입 배경과 Ondo Finance와의 연동 구조를 분석합니다.',
+  '', '2024-12-23'
+),
+(
+  '부동산 토큰화의 현실 — RealT vs Lofty AI 비교 분석',
+  '미국 주거용 부동산 토큰화 플랫폼 양대 산맥인 RealT(Ethereum)와 Lofty AI(Solana)를 수익률, 유동성, 법적 구조 측면에서 심층 비교했습니다.',
+  '', '2024-12-16'
+),
+(
+  '탄소 크레딧 토큰화, 왜 다시 주목받나',
+  'Toucan Protocol을 중심으로 한 탄소 크레딧 RWA 시장이 ESG 규제 강화와 함께 재조명되고 있습니다. 현재 시장 규모와 주요 플레이어, 투자 기회를 살펴봅니다.',
+  '', '2024-12-09'
+),
+(
+  'Solana 위의 RWA — 왜 개발자들이 몰리는가',
+  '높은 처리량과 낮은 수수료를 앞세운 Solana가 RWA 플랫폼의 새로운 거점으로 부상하고 있습니다. Lofty AI, Homebase 등 Solana 기반 RWA 프로젝트 현황을 정리합니다.',
+  '', '2024-12-02'
+);
+

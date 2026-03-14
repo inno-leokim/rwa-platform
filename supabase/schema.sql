@@ -31,3 +31,17 @@ create policy "projects_public_read" on projects for select using (true);
 -- RLS: subscribers는 insert만 허용 (anon)
 alter table subscribers enable row level security;
 create policy "subscribers_insert" on subscribers for insert with check (true);
+
+-- newsletters 테이블
+create table newsletters (
+  id          uuid primary key default gen_random_uuid(),
+  title       text not null,
+  summary     text not null,
+  content_url text not null default '',
+  issued_at   date not null,
+  created_at  timestamptz not null default now()
+);
+
+-- RLS: newsletters는 누구나 읽기 가능
+alter table newsletters enable row level security;
+create policy "newsletters_public_read" on newsletters for select using (true);

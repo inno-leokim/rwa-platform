@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
-import { Project } from './types'
+import { Project, Newsletter } from './types'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -35,6 +35,17 @@ export async function getRelatedProjects(currentId: string, category: string): P
     .eq('category', category)
     .neq('id', currentId)
     .limit(3)
+
+  if (error) throw new Error(error.message)
+  return data ?? []
+}
+
+// Newsletters
+export async function getNewsletters(): Promise<Newsletter[]> {
+  const { data, error } = await supabase
+    .from('newsletters')
+    .select('*')
+    .order('issued_at', { ascending: false })
 
   if (error) throw new Error(error.message)
   return data ?? []

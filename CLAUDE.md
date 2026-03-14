@@ -38,25 +38,22 @@ npm run lint    # ESLint 검사
 | 4 | projects 테이블 스키마 SQL 작성 (`supabase/schema.sql`) | O |
 | 4 | mock 데이터 → 실제 Supabase 쿼리로 교체 | O |
 | 4 | 뉴스레터 구독 폼 → `subscribers` 테이블 저장 | O |
-| 5 | `/newsletter` 아카이브 페이지 | |
+| 5 | `/newsletter` 아카이브 페이지 | O |
 | 6 | 페이지별 SEO 메타태그 (title template, OG tags) | O |
 | 6 | `loading.tsx`, `error.tsx` 추가 (앱 전체 + 각 라우트) | O |
 | 6 | 샘플 프로젝트 12개 시드 SQL (`supabase/seed.sql`) | O |
 | 6 | Vercel 배포 환경변수 정리 (`README.md`) | O |
 | 6 | `README.md` 작성 | O |
 
-## 현재 구현 상태 (2026-03-14 기준)
+## 현재 구현 상태 (2026-03-14 기준) — MVP 완료 + Vercel 배포 완료 ✅
 
-### 완료 ✅
+### 완료
 - **1단계: 홈 페이지** — 히어로, 통계, 프로젝트 카드 6개, 뉴스레터 구독 폼
 - **2단계: 프로젝트 리스트** — 카테고리/체인/상태 필터 + 텍스트 검색 (`/projects`)
 - **3단계: 프로젝트 상세** — 기본 정보 사이드바, 상세 설명, 공식 사이트 링크, 관련 프로젝트 3개 (`/projects/[id]`)
 - **4단계: Supabase 연동** — 클라이언트 설정, 스키마 SQL, 쿼리 교체, 구독 저장
-
-- **6단계: 배포 준비** — SEO 메타태그 (title template, OG), loading/error.tsx (전체 + 각 라우트), 시드 SQL 12개, README, Vercel 환경변수 정리
-
-### 미완료
-- **5단계**: `/newsletter` 아카이브 페이지
+- **5단계: 뉴스레터** — 아카이브 페이지 (`/newsletter`), 구독 폼, 발행 이력 목록
+- **6단계: 배포 준비** — SEO 메타태그, loading/error.tsx, 시드 SQL 12개, README, Vercel 배포
 
 ## 실제 파일 구조
 ```
@@ -67,6 +64,9 @@ src/
 │   ├── page.tsx                # 홈 페이지 (서버 컴포넌트, Supabase)
 │   ├── loading.tsx             # 전역 로딩 UI (스피너)
 │   ├── error.tsx               # 전역 에러 UI ('use client')
+│   ├── newsletter/
+│   │   ├── page.tsx            # 뉴스레터 아카이브 (서버, Supabase)
+│   │   └── loading.tsx         # 스켈레톤 UI
 │   └── projects/
 │       ├── page.tsx            # 프로젝트 리스트 (서버 → ProjectsClient)
 │       ├── loading.tsx         # 스켈레톤 카드 6개
@@ -82,11 +82,11 @@ src/
 │   └── NewsletterForm.tsx      # 이메일 구독 폼 ('use client', Supabase insert)
 └── lib/
     ├── types.ts                # Project, ProjectCategory, ProjectStatus 타입
-    ├── supabase.ts             # Supabase 클라이언트 + getProjects/getProjectById/getRelatedProjects/subscribeNewsletter
+    ├── supabase.ts             # Supabase 클라이언트 + getProjects/getProjectById/getRelatedProjects/getNewsletters/subscribeNewsletter
     └── mockData.ts             # 12개 mock 프로젝트 (미사용, 참고용)
 supabase/
-├── schema.sql                  # projects + subscribers 테이블 DDL, RLS 정책
-└── seed.sql                    # 샘플 프로젝트 12개 INSERT
+├── schema.sql                  # projects + subscribers + newsletters 테이블 DDL, RLS 정책
+└── seed.sql                    # 샘플 프로젝트 12개 + 뉴스레터 5개 INSERT
 ```
 
 ## Supabase 설정 방법
