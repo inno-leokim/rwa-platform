@@ -16,7 +16,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **스타일링**: Tailwind CSS v4 (`@import "tailwindcss"` 방식, `@tailwind` 디렉티브 사용 안 함)
 - **DB**: Supabase (PostgreSQL) — `@supabase/supabase-js` 설치 완료
 - **배포**: Vercel
-- **뉴스레터**: Stibee
+- **뉴스레터**: Brevo (API 연동, `BREVO_API_KEY` 서버사이드 전용)
 
 ## 개발 명령어
 ```bash
@@ -45,7 +45,7 @@ npm run lint    # ESLint 검사
 | 6 | Vercel 배포 환경변수 정리 (`README.md`) | O |
 | 6 | `README.md` 작성 | O |
 
-## 현재 구현 상태 (2026-03-14 기준) — MVP 완료 + Vercel 배포 완료 ✅
+## 현재 구현 상태 (2026-03-15 기준) — MVP 완료 + Vercel 배포 완료 ✅
 
 ### 완료
 - **1단계: 홈 페이지** — 히어로, 통계, 프로젝트 카드 6개, 뉴스레터 구독 폼
@@ -54,6 +54,7 @@ npm run lint    # ESLint 검사
 - **4단계: Supabase 연동** — 클라이언트 설정, 스키마 SQL, 쿼리 교체, 구독 저장
 - **5단계: 뉴스레터** — 아카이브 페이지 (`/newsletter`), 구독 폼, 발행 이력 목록
 - **6단계: 배포 준비** — SEO 메타태그, loading/error.tsx, 시드 SQL 12개, README, Vercel 배포
+- **Brevo 연동** — `/api/subscribe` 라우트, 이메일 중복/형식 에러 처리, 서버사이드 API 키
 
 ## 실제 파일 구조
 ```
@@ -79,14 +80,15 @@ src/
 │   ├── Header.tsx              # 공통 네비게이션 (모든 페이지 공유)
 │   ├── ProjectCard.tsx         # 프로젝트 카드 (Link 래핑, 서버)
 │   ├── ProjectsClient.tsx      # 필터+검색 로직 ('use client', useMemo)
-│   └── NewsletterForm.tsx      # 이메일 구독 폼 ('use client', Supabase insert)
+│   └── NewsletterForm.tsx      # 이메일 구독 폼 ('use client', /api/subscribe POST)
 └── lib/
-    ├── types.ts                # Project, ProjectCategory, ProjectStatus 타입
-    ├── supabase.ts             # Supabase 클라이언트 + getProjects/getProjectById/getRelatedProjects/getNewsletters/subscribeNewsletter
+    ├── types.ts                # Project, ProjectCategory, ProjectStatus, Newsletter 타입
+    ├── supabase.ts             # Supabase 클라이언트 + getProjects/getProjectById/getRelatedProjects/getNewsletters
     └── mockData.ts             # 12개 mock 프로젝트 (미사용, 참고용)
 supabase/
 ├── schema.sql                  # projects + subscribers + newsletters 테이블 DDL, RLS 정책
-└── seed.sql                    # 샘플 프로젝트 12개 + 뉴스레터 5개 INSERT
+├── seed.sql                    # 샘플 프로젝트 12개 + 뉴스레터 5개 INSERT
+└── real_projects.sql           # 실제 RWA 프로젝트 10개 INSERT (Ondo, Maple, RealT 등)
 ```
 
 ## Supabase 설정 방법
@@ -124,7 +126,10 @@ type Project = {
 
 ## 개발 규칙
 - 서버 컴포넌트 우선 사용, 클라이언트 컴포넌트는 필요할 때만 (`'use client'`)
-- 환경변수: `.env.local`에 `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- 환경변수:
+  - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` — 클라이언트 노출 가능
+  - `BREVO_API_KEY` — 서버사이드 전용 (`NEXT_PUBLIC_` 붙이지 말 것)
+- 외부 API 호출은 반드시 `/app/api/` Route Handler를 통해 서버사이드에서 처리
 
 ## MVP 범위 외 (나중에 추가)
 로그인/회원가입, 실시간 온체인 데이터, 댓글/커뮤니티, 관리자 페이지

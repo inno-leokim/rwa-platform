@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## 2026-03-15 — Brevo 뉴스레터 구독 연동
+
+### 뉴스레터 구독 API 연동
+- `src/app/api/subscribe/route.ts` — Brevo API POST 라우트 생성
+  - 이메일 형식 검증 (서버사이드)
+  - Brevo `/v3/contacts` API 호출, `listIds: [2]` 구독 처리
+  - 응답 케이스 분기: 성공(201/204), 중복(409), 형식오류(400), 서버오류(500)
+- `src/components/NewsletterForm.tsx` — UI 동작 전면 교체
+  - Supabase 직접 insert → `/api/subscribe` POST 요청으로 변경
+  - 상태 5종 처리: idle / loading / success / error / already / invalid_email
+  - 성공: "구독이 완료됐어요! 🎉"
+  - 중복: "이미 구독 중인 이메일이에요." (노란색)
+  - 실패: "잠시 후 다시 시도해주세요." (빨간색)
+- `.env.local` — `BREVO_API_KEY` 추가 (서버사이드 전용, `NEXT_PUBLIC_` 없음)
+- `supabase/real_projects.sql` — 실제 RWA 프로젝트 10개 INSERT SQL 추가
+
 ## 2026-03-14 — MVP 개발 완료 + Vercel 배포
 
 ### 프로젝트 초기 설정

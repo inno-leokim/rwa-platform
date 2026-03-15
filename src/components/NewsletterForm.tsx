@@ -1,32 +1,49 @@
 'use client'
 
 import { useState } from 'react'
-import { subscribeNewsletter } from '@/lib/supabase'
+
+type Status = 'idle' | 'loading' | 'success' | 'error' | 'already' | 'invalid_email'
 
 export default function NewsletterForm() {
   const [email, setEmail] = useState('')
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const [status, setStatus] = useState<Status>('idle')
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!email) return
 
     setStatus('loading')
-    try {
-      await subscribeNewsletter(email)
+
+    const res = await fetch('/api/subscribe', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ email }),
+    })
+
+    if (res.ok) {
       setStatus('success')
       setEmail('')
-    } catch {
-      setStatus('error')
+      return
     }
+
+    const data = await res.json()
+    if (res.status === 409) setStatus('already')
+    else if (data.error === 'invalid_email') setStatus('invalid_email')
+    else setStatus('error')
   }
 
   if (status === 'success') {
     return (
       <div className="text-center py-3">
-        <p className="text-emerald-400 font-medium">구독 완료! 다음 뉴스레터를 기대해주세요 🎉</p>
+        <p className="text-emerald-400 font-medium">구독이 완료됐어요! 🎉</p>
       </div>
     )
+  }
+
+  const messages: Partial<Record<Status, string>> = {
+    error: '잠시 후 다시 시도해주세요.',
+    already: '이미 구독 중인 이메일이에요.',
+    invalid_email: '올바른 이메일을 입력해주세요.',
   }
 
   return (
@@ -45,11 +62,13 @@ export default function NewsletterForm() {
           disabled={status === 'loading'}
           className="px-5 py-3 bg-emerald-500 hover:bg-emerald-400 disabled:opacity-60 text-black font-semibold text-sm rounded-lg transition-colors whitespace-nowrap"
         >
-          {status === 'loading' ? '처리 중...' : '무료 구독'}
+          {status === 'loading' ? '구독 중...' : '무료 구독'}
         </button>
       </form>
-      {status === 'error' && (
-        <p className="text-red-400 text-xs">오류가 발생했습니다. 잠시 후 다시 시도해주세요.</p>
+      {messages[status] && (
+        <p className={`text-xs ${status === 'already' ? 'text-yellow-400' : 'text-red-400'}`}>
+          {messages[status]}
+        </p>
       )}
     </div>
   )
